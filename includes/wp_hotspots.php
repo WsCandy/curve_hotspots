@@ -68,7 +68,7 @@ class Wordpress_Hotspots {
 	 */
 	public function __construct() {
 
-		$this->Wordpress_Hotspots = 'plugin-name';
+		$this->Wordpress_Hotspots = 'Wordpress Hotspots';
 		$this->version = '1.0.0';
 
 		$this->load_dependencies();
