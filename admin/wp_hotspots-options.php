@@ -128,15 +128,12 @@
 
 		public function add_post_type() { ?>
 
-			<?
-
-			$post_types = get_post_types();
-
-			?>
+			<? $post_types = get_post_types(); ?>
 
 			<select id="post_type" name="hotspots_main[post_type]">
 				<? foreach($post_types as $type) :?>
-					<option value="<?= $type ;?>"<?= get_option('hotspots_main')['post_type'] === $type ? ' selected' : null ?>><?= $type ;?></option>
+					<? $data = get_post_type_object( $type ) ;?>
+					<option value="<?= $type ;?>"<?= get_option('hotspots_main')['post_type'] === $type ? ' selected' : null ?>><?= $data->labels->name ;?></option>
 				<? endforeach;?>
 			</select>
 			<p class="description">Which post type would you like the fields to appear on?</p>
