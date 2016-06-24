@@ -2,10 +2,11 @@
 
 	'use strict';
 
-	var Upload = function(meta) {
+	var Upload = function(meta, field) {
 
 		this.frame = null;
 		this.meta = meta;
+		this.field = field;
 		this.addButton = this.meta.find('.hotspot__add');
 		this.deleteButton = this.meta.find('.hotspot__delete');
 		this.imageContainer = this.meta.find('.hotspot__image');
@@ -54,11 +55,13 @@
 
 			var attachment = self.frame.state().get('selection').first().toJSON();
 
-			self.imageContainer.append('<img src="' + attachment.url + '" alt="" style="max-width:100%;"/>');
+			self.imageContainer.find('.hotspot__bg').remove();
 
-			// imgIdInput.val( attachment.id );
+			self.imageContainer.append('<img src="' + attachment.url + '" class="hotspot__bg" />');
 
-			self.addButton.parent().addClass('hidden');
+			self.field.val( attachment.id );
+
+			self.addButton.addClass('button-primary').text('Replace Image');
 			self.deleteButton.removeClass('hidden');
 
 		});
@@ -73,7 +76,7 @@
 
 	$(function() {
 
-		var media = new Upload($('.hotspot__background'));
+		var media = new Upload($('.hotspot__background'), $('#hotspot_bg'));
 
 		// // DELETE IMAGE LINK
 		// delImgLink.on( 'click', function( event ){
