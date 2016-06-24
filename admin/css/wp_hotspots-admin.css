@@ -10,7 +10,60 @@
 
 }
 
+.hotspot__image {
+
+	position: relative;
+	display: inline-block;
+
+}
+
 .hotspot__image img {
 	max-width: 100%;
 	height: auto;
+}
+
+.hotspot__add {
+
+	display: block;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	background: #191E23;
+	border-radius: 50%;
+	opacity: 0;
+	z-index: -1;
+
+	transition: opacity 0.25s ease;
+	text-align: center;
+	line-height: 30px;
+	font-size: 19px;
+	text-decoration: none;
+	color: white;
+
+}
+
+.hotspot__image:hover .hotspot__add {
+
+	opacity: 1;
+	z-index: 10;
+
+}
+
+.hotspot__point {
+
+	position: absolute;
+	z-index: 5;
+
+	display: block;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	line-height: 25px;
+	color: white;
+	background: #191E23;
+	text-decoration: none;
+	text-align: center;
+
 }

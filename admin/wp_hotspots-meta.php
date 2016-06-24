@@ -47,14 +47,14 @@
 			if($this->meta === '') {
 				$this->meta = [];
 			}
-
+			
 			?>
 
 			<div class="hotspot__background">
 
 				<?php wp_nonce_field( basename( __FILE__ ), 'hotspot_nonce' ); ?>
 
-				<input type="hidden" name="hotspot_bg" id="hotspot_bg">
+				<input type="hidden" name="hotspot_bg" id="hotspot_bg" value="<?= $this->meta['background'] ? $this->meta['background'] : null;?>">
 
 				<div class="hotspot__label">
 					<label for="">Image</label>
@@ -64,15 +64,26 @@
 				</div>
 				<p>
 				<? if($this->meta['background']) :?>
-					<a class="button  button-primary hotspot__add" href="javascript:void(0);">Replace Image</a>
+					<a class="button  button-primary hotspot__image__add" href="javascript:void(0);">Replace Image</a>
 				<? else :?>
-					<a class="button  hotspot__add" href="javascript:void(0);">Add Image</a>
+					<a class="button  hotspot__image__add" href="javascript:void(0);">Add Image</a>
 				<? endif;?>
+					<a href="javascript:void(0);" class="button hotspot__image__delete<?= $this->meta['background'] ? '' : '  hidden'?>">Remove Image</a>
 				</p>
 				<div class="hotspot__image">
+					<a href="javascript: void(0);" class="hotspot__add">&plus;</a>
 					<? if($this->meta['background']) :?>
 						<img src="<?= wp_get_attachment_image_src($this->meta['background'], 'original')[0];?>" class="hotspot__bg">
 					<? endif;?>
+					<? if($this->meta['hotspots']) :?>
+						<? foreach($this->meta['hotspots'] as $id => $spot) :?>
+							<a class="hotspot__point" data-id="<?= $id ?>" style="top: <?= $spot['y'] ?>%; left: <?= $spot['x'] ?>%;">
+								<?= $id ?>
+								<input type="hidden" name="hotspots[<?= $id ?>][y]" value="<?= $spot['y'] ?>">
+								<input type="hidden" name="hotspots[<?= $id ?>][x]" value="<?= $spot['x'] ?>">
+							</a>
+						<? endforeach;?>
+					<? endif?>
 				</div>
 			</div>
 
@@ -105,6 +116,7 @@
 		public function save_meta( $post_id ) {
 
 			$this->new_meta['background'] = $_POST['hotspot_bg'];
+			$this->new_meta['hotspots'] = $_POST['hotspots'];
 
 			if(empty($this->meta)) {
 
