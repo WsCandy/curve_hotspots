@@ -45,6 +45,12 @@
 		private $options;
 
 		/**
+		 * @var     Meta, store the Wordpress_Hotspots_Meta object.
+		 * @since   1.0.0
+		 */
+		private $meta;
+
+		/**
 		 * Initialize the class and set its properties.
 		 *
 		 * @since    1.0.0
@@ -59,6 +65,7 @@
 			$this->Wordpress_Hotspots = $Wordpress_Hotspots;
 			$this->version            = $version;
 			$this->options = new Wordpress_Hotspots_Options();
+			$this->meta = new Wordpress_Hotspots_Meta($this->options->options['post_type']);
 
 		}
 
@@ -69,6 +76,12 @@
 			 */
 
 			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/wp_hotspots-options.php';
+
+			/**
+			 * The class that generates the meta boxes on the correct page
+			 */
+
+			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/wp_hotspots-meta.php';
 
 		}
 

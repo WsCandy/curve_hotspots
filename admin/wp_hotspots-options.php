@@ -17,6 +17,8 @@
 	 */
 	class Wordpress_Hotspots_Options {
 
+		public $options;
+
 		/**
 		 * Wordpress_Hotspots_Options constructor.
 		 *
@@ -24,6 +26,8 @@
 		 */
 
 		public function __construct() {
+
+			$this->options = get_option( 'hotspots_main' );
 
 			add_action( 'admin_menu', [ $this, 'create_menu' ] );
 			add_action( 'admin_init', [ $this, 'register_settings' ] );
@@ -45,7 +49,7 @@
 				'administrator',
 				'wp-hotspots',
 				[ $this, 'create_option_page' ],
-				'dashicons-sticky',
+				'dashicons-location-alt',
 				2
 
 			);
@@ -131,10 +135,10 @@
 			<? $post_types = get_post_types(); ?>
 
 			<select id="post_type" name="hotspots_main[post_type]">
-				<? foreach($post_types as $type) :?>
-					<? $data = get_post_type_object( $type ) ;?>
-					<option value="<?= $type ;?>"<?= get_option('hotspots_main')['post_type'] === $type ? ' selected' : null ?>><?= $data->labels->name ;?></option>
-				<? endforeach;?>
+				<? foreach ( $post_types as $type ) : ?>
+					<? $data = get_post_type_object( $type ); ?>
+					<option value="<?= $type; ?>"<?= $this->options['post_type'] === $type ? ' selected' : null ?>><?= $data->labels->name; ?></option>
+				<? endforeach; ?>
 			</select>
 			<p class="description">Which post type would you like the fields to appear on?</p>
 

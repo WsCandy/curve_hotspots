@@ -1,4 +1,11 @@
-/**
- * All of the CSS for your admin-specific functionality should be
- * included in this file.
- */
+.hotspot__label {
+
+	margin-bottom: 10px;
+
+}
+
+.hotspot__label label {
+
+	font-weight: bold;
+
+}
