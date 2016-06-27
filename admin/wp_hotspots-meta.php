@@ -151,6 +151,12 @@
 
 		public function save_meta( $post_id ) {
 
+			if(isset($_POST['hotspots'])) {
+
+				ksort($_POST['hotspots']);
+
+			}
+
 			$this->new_meta['background'] = $_POST['hotspot_bg'];
 			$this->new_meta['hotspots']   = $_POST['hotspots'];
 			
