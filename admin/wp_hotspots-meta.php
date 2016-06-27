@@ -22,10 +22,12 @@
 		public $type;
 		public $meta;
 		public $new_meta;
+		public $products;
 
 		public function __construct( $type = null ) {
 
-			$this->type = $type;
+			$this->type     = $type;
+			$this->products = get_posts( [ 'post_type' => 'products' ] );
 
 			add_action( 'add_meta_boxes', [ $this, 'add_meta' ] );
 			add_action( 'save_post', [ $this, 'validate_meta' ] );
@@ -51,6 +53,10 @@
 			?>
 
 			<div class="hotspot__background">
+
+				<script>
+					window.products = <?= json_encode($this->products) ?>;
+				</script>
 
 				<?php wp_nonce_field( basename( __FILE__ ), 'hotspot_nonce' ); ?>
 
@@ -90,12 +96,12 @@
 			<div class="hotspot__details">
 				<? if ( $this->meta['hotspots'] ) : ?>
 					<? foreach ( $this->meta['hotspots'] as $id => $spot ) : ?>
-						<div id="hotspot_detail_<?= $id ?>" class="hotspot__detail" data-id="<?= $id; ?>">
+						<div id="hotspot_detail_<?= $id; ?>" class="hotspot__detail" data-id="<?= $id; ?>">
 							<div class="hotspot__detail__header">
 								<span class="hotspot__id"><?= $id ?></span>Hot spot
 							</div>
 							<div class="hotspot__detail__left">
-								<input type="hidden" name="hotspots[<?= $id ?>][image]" id="hotspot_detail_image_<?= $id?>" value="<?= $spot['image'] ? $spot['image'] : null; ?>">
+								<input type="hidden" name="hotspots[<?= $id ?>][image]" id="hotspot_detail_image_<?= $id ?>" value="<?= $spot['image'] ? $spot['image'] : null; ?>">
 								<div class="hotspot__label">
 									<label>Image</label>
 									<p class="description">
@@ -119,15 +125,35 @@
 										<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
 											<a class="hotspot__point" data-id="<?= $sub_id ?>" style="top: <?= $sub_spot['y'] ?>%; left: <?= $sub_spot['x'] ?>%;">
 												<?= $sub_id ?>
-												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id?>][y]" value="<?= $sub_spot['y'] ?>">
-												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id?>][x]" value="<?= $sub_spot['x'] ?>">
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][y]" value="<?= $sub_spot['y'] ?>">
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][x]" value="<?= $sub_spot['x'] ?>">
 											</a>
 										<? endforeach; ?>
 									<? endif ?>
 								</div>
 							</div>
 							<div class="hotspot__detail__right">
+								<? if ( $spot['hotspots'] ) : ?>
+								<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
+									<div class="hotspot__detail" data-id="<?= $sub_id; ?>">
+										<div class="hotspot__detail__header">
+											<span class="hotspot__id"><?= $sub_id ?></span>Hot spot
+										</div>
+										<div class="hotspot__detail__full">
+											<div class="hotspot__label">
+												<label>Product</label>
+											</div>
+											<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][product]">
+												<option value="">Select a Product</option>
+												<? foreach ( $this->products as $product ) : ?>
+													<option value="<?= $product->ID; ?>"<?= $product->ID === (int) $sub_spot['product'] ? '  selected' : null ?>><?= $product->post_title; ?></option>
+												<? endforeach; ?>
+											</select>
+										</div>
+									</div>
+								<? endforeach; ?>
 							</div>
+							<? endif; ?>
 						</div>
 					<? endforeach; ?>
 				<? endif; ?>
@@ -161,14 +187,24 @@
 
 		public function save_meta( $post_id ) {
 
-			if(isset($_POST['hotspots'])) {
-
-				ksort($_POST['hotspots']);
-
-			}
-
 			$this->new_meta['background'] = $_POST['hotspot_bg'];
 			$this->new_meta['hotspots']   = $_POST['hotspots'];
+
+			if ( isset( $this->new_meta['hotspots'] ) ) {
+
+				ksort( $this->new_meta['hotspots'] );
+
+				foreach ( $this->new_meta['hotspots'] as $key => $hotspot ) {
+
+					if ( isset( $this->new_meta['hotspots'][ $key ]['hotspots'] ) ) {
+
+						ksort( $this->new_meta['hotspots'][ $key ]['hotspots'] );
+
+					}
+
+				}
+
+			}
 
 			if ( empty( $this->meta ) ) {
 
