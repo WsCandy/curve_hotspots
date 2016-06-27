@@ -66,7 +66,7 @@
 
 			self.imageContainer.find('.hotspot__bg').remove();
 			self.imageContainer.append('<img src="' + attachment.url + '" class="hotspot__bg" />');
-			self.field.val( attachment.id );
+			self.field.val(attachment.id);
 			self.addButton.addClass('button-primary').text('Replace Image');
 			self.deleteButton.removeClass('hidden');
 
@@ -92,6 +92,7 @@
 	var Hotspots = function(data) {
 
 		this.hotspots = {};
+		this.details = data.details;
 		this.container = data.container;
 		this.total = data.container.find('.hotspot__point').length;
 		this.addButton = data.container.find('.hotspot__add');
@@ -135,9 +136,7 @@
 
 	Hotspots.prototype.add = function() {
 
-		this.total +=1;
-
-		console.log(this.total);
+		this.total += 1;
 
 		for(var i = 1; i < (this.total + 1); i++) {
 
@@ -152,24 +151,24 @@
 
 			var inputX = $('<input />', {
 
-				'type' : 'hidden',
-				'name' : 'hotspots['+i+'][x]',
-				'value' : left
+				'type': 'hidden',
+				'name': 'hotspots[' + i + '][x]',
+				'value': left
 
 			});
 
 			var inputY = $('<input />', {
 
-				'type' : 'hidden',
-				'name' : 'hotspots['+i+'][y]',
-				'value' : top
+				'type': 'hidden',
+				'name': 'hotspots[' + i + '][y]',
+				'value': top
 
 			});
 
 			var point = $('<a />', {
 
-				'class' : 'hotspot__point',
-				'data-id' : i
+				'class': 'hotspot__point',
+				'data-id': i
 
 			});
 
@@ -184,6 +183,8 @@
 			inputX.appendTo(point);
 			inputY.appendTo(point);
 
+			this.renderNewDetail(i);
+
 			this.hotspots[i] = point;
 
 			this.bind(point);
@@ -191,6 +192,66 @@
 			break;
 
 		}
+
+	};
+
+	Hotspots.prototype.renderNewDetail = function(id) {
+
+		var insert = Math.max(0, id -2);
+
+		var html = [
+
+			'<div id="hotspot_detail_' + id + '" class="hotspot__detail" data-id="' + id + '">',
+			'<div class="hotspot__detail__header">',
+			'<span class="hotspot__id">' + id + '</span> Hot spot',
+			'</div>',
+			'<div class="hotspot__detail__left">',
+			'<input type="hidden" name="hotspots[' + id + '][image]" id="hotspot_detail_image_'+id+'" value="">',
+			'<div class="hotspot__label">',
+			'<label for="">Image</label>',
+			'<p class="description">',
+			'Select an image to display for this hot spot.',
+			'</p>',
+			'</div>',
+			'<p>',
+			'<a class="button  hotspot__image__add" href="javascript:void(0);">Add Image</a> ',
+			'<a href="javascript:void(0);" class="button hotspot__image__delete hidden">Remove Image</a>',
+			'</p>',
+			'<div class="hotspot__image">',
+			'</div>',
+			'</div>',
+			'<div class="hotspot__detail__right">',
+			'</div>',
+			'</div>'
+
+		].join('');
+		
+		if(insert === 0) {
+
+			if(id === 2) {
+
+				$(html).insertAfter(this.details.children().eq(insert));
+
+			} else {
+
+				$(html).prependTo(this.details);
+
+			}
+
+		} else {
+
+			$(html).insertAfter(this.details.children().eq(insert));
+
+		}
+
+		// this.details.append(html);
+
+		new Upload({
+
+			meta: $('#hotspot_detail_' + id),
+			field: $('#hotspot_detail_image_' + id)
+
+		});
 
 	};
 
@@ -209,13 +270,13 @@
 		});
 
 	};
-	
+
 	Hotspots.prototype.delete = function(id) {
 
 		this.total--;
 		this.hotspots[id] = null;
 
-		$('#hotspot_detail_'+id).remove();
+		$('#hotspot_detail_' + id).remove();
 
 	};
 
@@ -224,13 +285,14 @@
 		var mainBg = new Upload({
 
 			meta: $('.hotspot__background'),
-			field : $('#hotspot_bg')
+			field: $('#hotspot_bg')
 
 		});
 
 		var mainHotspots = new Hotspots({
 
-			container: $('.hotspot__background').find('.hotspot__image')
+			container: $('.hotspot__background').find('.hotspot__image'),
+			details: $('.hotspot__details')
 
 		});
 
@@ -240,8 +302,8 @@
 
 				new Upload({
 
-					meta: $('#hotspot_detail_'+hotspot),
-					field: $('#hotspot_detail_image_'+hotspot)
+					meta: $('#hotspot_detail_' + hotspot),
+					field: $('#hotspot_detail_image_' + hotspot)
 
 				});
 
