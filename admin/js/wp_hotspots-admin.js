@@ -92,8 +92,10 @@
 	var Hotspots = function(data) {
 
 		this.hotspots = {};
+		this.type = data.type,
 		this.details = data.details;
 		this.container = data.container;
+		this.image = data.container.find('.hotspot__image');
 		this.total = data.container.find('.hotspot__point').length;
 		this.addButton = data.container.find('.hotspot__add');
 
@@ -119,7 +121,7 @@
 
 	Hotspots.prototype.index = function() {
 
-		var currentSpots = this.container.find('.hotspot__point');
+		var currentSpots = this.image.find('.hotspot__point');
 
 		this.total = currentSpots.length;
 
@@ -149,10 +151,12 @@
 			var top = Math.round((Math.random() * 100) * 100) / 100,
 				left = Math.round((Math.random() * 100) * 100) / 100;
 
+			var name = this.container.attr('data-id') ? 'hotspots['+this.container.attr('data-id')+'][hotspots][' + i + ']' : 'hotspots[' + i + ']';
+
 			var inputX = $('<input />', {
 
 				'type': 'hidden',
-				'name': 'hotspots[' + i + '][x]',
+				'name': name+'[x]',
 				'value': left
 
 			});
@@ -160,7 +164,7 @@
 			var inputY = $('<input />', {
 
 				'type': 'hidden',
-				'name': 'hotspots[' + i + '][y]',
+				'name': name+'[y]',
 				'value': top
 
 			});
@@ -179,11 +183,15 @@
 
 			}).text(i);
 
-			point.appendTo(this.container);
+			point.appendTo(this.image);
 			inputX.appendTo(point);
 			inputY.appendTo(point);
 
-			this.renderNewDetail(i);
+			if(this.type === 1) {
+
+				this.renderNewDetail(i);
+
+			}
 
 			this.hotspots[i] = point;
 
@@ -203,12 +211,12 @@
 
 			'<div id="hotspot_detail_' + id + '" class="hotspot__detail" data-id="' + id + '">',
 			'<div class="hotspot__detail__header">',
-			'<span class="hotspot__id">' + id + '</span> Hot spot',
+			'<span class="hotspot__id">' + id + '</span>Hot spot',
 			'</div>',
 			'<div class="hotspot__detail__left">',
 			'<input type="hidden" name="hotspots[' + id + '][image]" id="hotspot_detail_image_'+id+'" value="">',
 			'<div class="hotspot__label">',
-			'<label for="">Image</label>',
+			'<label>Image</label>',
 			'<p class="description">',
 			'Select an image to display for this hot spot.',
 			'</p>',
@@ -218,6 +226,7 @@
 			'<a href="javascript:void(0);" class="button hotspot__image__delete hidden">Remove Image</a>',
 			'</p>',
 			'<div class="hotspot__image">',
+			'<a href="javascript: void(0);" class="hotspot__add">&plus;</a>',
 			'</div>',
 			'</div>',
 			'<div class="hotspot__detail__right">',
@@ -225,7 +234,7 @@
 			'</div>'
 
 		].join('');
-		
+
 		if(insert === 0) {
 
 			if(id === 2) {
@@ -244,12 +253,18 @@
 
 		}
 
-		// this.details.append(html);
-
 		new Upload({
 
 			meta: $('#hotspot_detail_' + id),
 			field: $('#hotspot_detail_image_' + id)
+
+		});
+
+		new Hotspots({
+
+			container: $('#hotspot_detail_' + id),
+			details: $('#hotspot_detail_' + id).find('.hotspot__detail__right'),
+			type: 2
 
 		});
 
@@ -276,7 +291,7 @@
 		this.total--;
 		this.hotspots[id] = null;
 
-		$('#hotspot_detail_' + id).remove();
+		this.details.find('.hotspot__detail[data-id="'+id+'"]').remove();
 
 	};
 
@@ -291,8 +306,9 @@
 
 		var mainHotspots = new Hotspots({
 
-			container: $('.hotspot__background').find('.hotspot__image'),
-			details: $('.hotspot__details')
+			container: $('.hotspot__background'),
+			details: $('.hotspot__details'),
+			type: 1
 
 		});
 
@@ -300,10 +316,20 @@
 
 			if(mainHotspots.hotspots.hasOwnProperty(hotspot)) {
 
+				var container = $('#hotspot_detail_' + hotspot)
+
 				new Upload({
 
-					meta: $('#hotspot_detail_' + hotspot),
+					meta: container,
 					field: $('#hotspot_detail_image_' + hotspot)
+
+				});
+
+				new Hotspots({
+
+					container: container,
+					details: container.find('.hotspot__detail__right'),
+					type: 2
 
 				});
 

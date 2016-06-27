@@ -57,7 +57,7 @@
 				<input type="hidden" name="hotspot_bg" id="hotspot_bg" value="<?= $this->meta['background'] ? $this->meta['background'] : null; ?>">
 
 				<div class="hotspot__label">
-					<label for="">Image</label>
+					<label>Image</label>
 					<p class="description">
 						Select or upload an image you would like to place hot spots on.
 					</p>
@@ -92,12 +92,12 @@
 					<? foreach ( $this->meta['hotspots'] as $id => $spot ) : ?>
 						<div id="hotspot_detail_<?= $id ?>" class="hotspot__detail" data-id="<?= $id; ?>">
 							<div class="hotspot__detail__header">
-								<span class="hotspot__id"><?= $id ?></span> Hot spot
+								<span class="hotspot__id"><?= $id ?></span>Hot spot
 							</div>
 							<div class="hotspot__detail__left">
 								<input type="hidden" name="hotspots[<?= $id ?>][image]" id="hotspot_detail_image_<?= $id?>" value="<?= $spot['image'] ? $spot['image'] : null; ?>">
 								<div class="hotspot__label">
-									<label for="">Image</label>
+									<label>Image</label>
 									<p class="description">
 										Select an image to display for this hot spot.
 									</p>
@@ -111,9 +111,19 @@
 									<a href="javascript:void(0);" class="button hotspot__image__delete<?= $spot['image'] ? '' : '  hidden' ?>">Remove Image</a>
 								</p>
 								<div class="hotspot__image">
+									<a href="javascript: void(0);" class="hotspot__add">&plus;</a>
 									<? if ( $spot['image'] ) : ?>
 										<img src="<?= wp_get_attachment_image_src( $spot['image'], 'original' )[0]; ?>" class="hotspot__bg">
 									<? endif; ?>
+									<? if ( $spot['hotspots'] ) : ?>
+										<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
+											<a class="hotspot__point" data-id="<?= $sub_id ?>" style="top: <?= $sub_spot['y'] ?>%; left: <?= $sub_spot['x'] ?>%;">
+												<?= $sub_id ?>
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id?>][y]" value="<?= $sub_spot['y'] ?>">
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id?>][x]" value="<?= $sub_spot['x'] ?>">
+											</a>
+										<? endforeach; ?>
+									<? endif ?>
 								</div>
 							</div>
 							<div class="hotspot__detail__right">
@@ -159,7 +169,7 @@
 
 			$this->new_meta['background'] = $_POST['hotspot_bg'];
 			$this->new_meta['hotspots']   = $_POST['hotspots'];
-			
+
 			if ( empty( $this->meta ) ) {
 
 				add_post_meta( $post_id, '_hotspots', $this->new_meta, true );
