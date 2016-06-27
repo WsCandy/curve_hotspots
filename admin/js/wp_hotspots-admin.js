@@ -215,6 +215,8 @@
 		this.total--;
 		this.hotspots[id] = null;
 
+		$('#hotspot_detail_'+id).remove();
+
 	};
 
 	$(function() {
@@ -228,9 +230,24 @@
 
 		var mainHotspots = new Hotspots({
 
-			container: $('.hotspot__image')
+			container: $('.hotspot__background').find('.hotspot__image')
 
 		});
+
+		for(var hotspot in mainHotspots.hotspots) {
+
+			if(mainHotspots.hotspots.hasOwnProperty(hotspot)) {
+
+				new Upload({
+
+					meta: $('#hotspot_detail_'+hotspot),
+					field: $('#hotspot_detail_image_'+hotspot)
+
+				});
+
+			}
+
+		}
 
 	});
 
