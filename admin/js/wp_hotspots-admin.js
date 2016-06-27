@@ -191,6 +191,10 @@
 
 				this.renderNewDetail(i);
 
+			} else if(this.type === 2) {
+
+				this.renderNewProduct(i);
+
 			}
 
 			this.hotspots[i] = point;
@@ -203,9 +207,19 @@
 
 	};
 
-	Hotspots.prototype.renderNewDetail = function(id) {
+	Hotspots.prototype.renderNewProduct = function(id) {
 
-		var insert = Math.max(0, id -2);
+		var html = [
+
+			'<p>TEST '+id+'</p>'
+
+		].join('');
+
+		this.insert(id, html);
+
+	};
+
+	Hotspots.prototype.renderNewDetail = function(id) {
 
 		var html = [
 
@@ -235,6 +249,29 @@
 
 		].join('');
 
+		this.insert(id, html);
+
+		new Upload({
+
+			meta: $('#hotspot_detail_' + id),
+			field: $('#hotspot_detail_image_' + id)
+
+		});
+
+		new Hotspots({
+
+			container: $('#hotspot_detail_' + id),
+			details: $('#hotspot_detail_' + id).find('.hotspot__detail__right'),
+			type: 2
+
+		});
+
+	};
+
+	Hotspots.prototype.insert = function(id, html) {
+
+		var insert = Math.max(0, id -2);
+
 		if(insert === 0) {
 
 			if(id === 2) {
@@ -252,21 +289,6 @@
 			$(html).insertAfter(this.details.children().eq(insert));
 
 		}
-
-		new Upload({
-
-			meta: $('#hotspot_detail_' + id),
-			field: $('#hotspot_detail_image_' + id)
-
-		});
-
-		new Hotspots({
-
-			container: $('#hotspot_detail_' + id),
-			details: $('#hotspot_detail_' + id).find('.hotspot__detail__right'),
-			type: 2
-
-		});
 
 	};
 
