@@ -85,8 +85,8 @@
 						<? foreach ( $this->meta['hotspots'] as $id => $spot ) : ?>
 							<a class="hotspot__point" data-id="<?= $id ?>" style="top: <?= $spot['y'] ?>%; left: <?= $spot['x'] ?>%;">
 								<?= $id ?>
-								<input type="hidden" name="hotspots[<?= $id ?>][y]" value="<?= $spot['y'] ?>">
-								<input type="hidden" name="hotspots[<?= $id ?>][x]" value="<?= $spot['x'] ?>">
+								<input type="hidden" name="hotspots[<?= $id ?>][x]" value="<?= $spot['x'] ?>" class="hotspot__x">
+								<input type="hidden" name="hotspots[<?= $id ?>][y]" value="<?= $spot['y'] ?>" class="hotspot__y">
 							</a>
 						<? endforeach; ?>
 					<? endif ?>
@@ -125,8 +125,8 @@
 										<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
 											<a class="hotspot__point" data-id="<?= $sub_id ?>" style="top: <?= $sub_spot['y'] ?>%; left: <?= $sub_spot['x'] ?>%;">
 												<?= $sub_id ?>
-												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][y]" value="<?= $sub_spot['y'] ?>">
-												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][x]" value="<?= $sub_spot['x'] ?>">
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][x]" value="<?= $sub_spot['x'] ?>" class="hotspot__x">
+												<input type="hidden" name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][y]" value="<?= $sub_spot['y'] ?>" class="hotspot__y">
 											</a>
 										<? endforeach; ?>
 									<? endif ?>

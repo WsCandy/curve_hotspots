@@ -129,14 +129,37 @@
 
 			var id = $(currentSpots[i]).attr('data-id');
 
-			this.hotspots[id] = $(currentSpots);
+			this.hotspots[id] = $(currentSpots[i]);
 
-			this.bind(this.details.children().eq(i).children('.hotspot__detail__header').children('.hotspot__delete'));
+			$(currentSpots[i]).draggable({
+
+				containment: $(currentSpots[i]).parent(),
+				stop: this.updateSpots
+
+			});
+
+			this.bindDelete(this.details.children().eq(i).children('.hotspot__detail__header').children('.hotspot__delete'));
 
 		}
 	};
 
-	Hotspots.prototype.bind = function(element) {
+	Hotspots.prototype.updateSpots = function(e) {
+
+		var self = $(this);
+
+		var parent = self.parent(),
+			posX = parseInt(self.css('left')),
+			posY = parseInt(self.css('top'));
+
+		var leftPer = Math.round(((posX / parent.width()) * 100) * 100) / 100,
+			topPer = Math.round(((posY / parent.height()) * 100) * 100) / 100;
+
+		self.find('.hotspot__x').val(leftPer);
+		self.find('.hotspot__y').val(topPer);
+
+	};
+
+	Hotspots.prototype.bindDelete = function(element) {
 
 		var self = this;
 
@@ -171,7 +194,8 @@
 
 				'type': 'hidden',
 				'name': name + '[x]',
-				'value': left
+				'value': left,
+				'class' :  'hotspot__x'
 
 			});
 
@@ -179,7 +203,8 @@
 
 				'type': 'hidden',
 				'name': name + '[y]',
-				'value': top
+				'value': top,
+				'class' : 'hotspot__y'
 
 			});
 
@@ -190,6 +215,8 @@
 
 			});
 
+			point.attr('draggable', true);
+
 			point.css({
 
 				top: top + '%',
@@ -198,6 +225,14 @@
 			}).text(i);
 
 			point.appendTo(this.image);
+
+			point.draggable({
+
+				containment: $(point).parent(),
+				stop: this.updateSpots
+
+			});
+
 			inputX.appendTo(point);
 			inputY.appendTo(point);
 
@@ -211,7 +246,7 @@
 
 			}
 
-			this.bind(this.details.children('*[data-id="'+i+'"]').children('.hotspot__detail__header').find('.hotspot__delete'));
+			this.bindDelete(this.details.children('*[data-id="'+i+'"]').children('.hotspot__detail__header').find('.hotspot__delete'));
 
 			this.hotspots[i] = point;
 
