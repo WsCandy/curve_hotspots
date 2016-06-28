@@ -134,25 +134,33 @@
 							</div>
 							<div class="hotspot__detail__right">
 								<? if ( $spot['hotspots'] ) : ?>
-								<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
-									<div class="hotspot__detail" data-id="<?= $sub_id; ?>">
-										<div class="hotspot__detail__header">
-											<span class="hotspot__id"><?= $sub_id ?></span>Hot spot<span class="hotspot__delete" data-id="<?= $sub_id; ?>">&minus;</span>
-										</div>
-										<div class="hotspot__detail__full">
-											<div class="hotspot__label">
-												<label>Product</label>
+									<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
+										<div class="hotspot__detail" data-id="<?= $sub_id; ?>">
+											<div class="hotspot__detail__header">
+												<span class="hotspot__id"><?= $sub_id ?></span>Hot spot<span class="hotspot__delete" data-id="<?= $sub_id; ?>">&minus;</span>
 											</div>
-											<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][product]">
-												<option value="">Select a Product</option>
-												<? foreach ( $this->products as $product ) : ?>
-													<option value="<?= $product->ID; ?>"<?= $product->ID === (int) $sub_spot['product'] ? '  selected' : null ?>><?= $product->post_title; ?></option>
-												<? endforeach; ?>
-											</select>
+											<div class="hotspot__detail__full">
+												<div class="hotspot__label">
+													<label>Product</label>
+												</div>
+												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][product]">
+													<option value="">Select a Product</option>
+													<? foreach ( $this->products as $product ) : ?>
+														<option value="<?= $product->ID; ?>"<?= $product->ID === (int) $sub_spot['product'] ? '  selected' : null ?>><?= $product->post_title; ?></option>
+													<? endforeach; ?>
+												</select>
+												<div class="hotspot__label">
+													<label>Alignment</label>
+													<p class="description">Which side of the hotspot would you like the label to appear on?</p>
+												</div>
+												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][alignment]">
+													<option value="left">Left</option>
+													<option value="right">Right</option>
+												</select>
+											</div>
 										</div>
-									</div>
-								<? endforeach; ?>
-							<? endif; ?>
+									<? endforeach; ?>
+								<? endif; ?>
 							</div>
 						</div>
 					<? endforeach; ?>

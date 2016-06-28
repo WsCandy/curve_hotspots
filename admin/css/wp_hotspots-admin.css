@@ -156,6 +156,12 @@
 
 }
 
+.hotspot__detail select {
+
+	margin-bottom: 10px;
+
+}
+
 .hotspot__detail:last-child {
 
 	margin-bottom: 12px;
