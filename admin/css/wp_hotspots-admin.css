@@ -82,7 +82,8 @@
 
 }
 
-.hotspot__id {
+.hotspot__id,
+.hotspot__delete {
 
 	display: inline-block;
 	margin-right: 12px;
@@ -96,6 +97,26 @@
 	background: #e5e5e5;
 	text-decoration: none;
 	text-align: center;
+	border: 1px solid transparent;
+
+}
+
+.hotspot__delete {
+
+	background: #e35950;
+	color: white;
+	float: right;
+	margin-right: 0;
+
+
+}
+
+.hotspot__delete:hover {
+
+	background: white;
+	color: #e35950;
+	border: 1px solid #e35950;
+	cursor: pointer;
 
 }
 

@@ -92,7 +92,7 @@
 	var Hotspots = function(data) {
 
 		this.hotspots = {};
-		this.type = data.type,
+		this.type = data.type;
 		this.details = data.details;
 		this.container = data.container;
 		this.image = data.container.find('.hotspot__image');
@@ -130,9 +130,23 @@
 			var id = $(currentSpots[i]).attr('data-id');
 
 			this.hotspots[id] = $(currentSpots);
-			this.bind($(currentSpots[i]));
+
+			this.bind(this.details.children().eq(i).children('.hotspot__detail__header').children('.hotspot__delete'));
 
 		}
+	};
+
+	Hotspots.prototype.bind = function(element) {
+
+		var self = this;
+
+		element.on('click', function(e) {
+
+			typeof e !== 'undefined' ? e.preventDefault() : null;
+
+			self.delete($(this).attr('data-id'));
+
+		});
 
 	};
 
@@ -151,12 +165,12 @@
 			var top = Math.round((Math.random() * 100) * 100) / 100,
 				left = Math.round((Math.random() * 100) * 100) / 100;
 
-			var name = this.container.attr('data-id') ? 'hotspots['+this.container.attr('data-id')+'][hotspots][' + i + ']' : 'hotspots[' + i + ']';
+			var name = this.container.attr('data-id') ? 'hotspots[' + this.container.attr('data-id') + '][hotspots][' + i + ']' : 'hotspots[' + i + ']';
 
 			var inputX = $('<input />', {
 
 				'type': 'hidden',
-				'name': name+'[x]',
+				'name': name + '[x]',
 				'value': left
 
 			});
@@ -164,7 +178,7 @@
 			var inputY = $('<input />', {
 
 				'type': 'hidden',
-				'name': name+'[y]',
+				'name': name + '[y]',
 				'value': top
 
 			});
@@ -197,9 +211,9 @@
 
 			}
 
-			this.hotspots[i] = point;
+			this.bind(this.details.children('*[data-id="'+i+'"]').children('.hotspot__detail__header').find('.hotspot__delete'));
 
-			this.bind(point);
+			this.hotspots[i] = point;
 
 			break;
 
@@ -209,9 +223,34 @@
 
 	Hotspots.prototype.renderNewProduct = function(id) {
 
+		var options = [];
+
+		for(var product in window.products) {
+
+			if(window.products.hasOwnProperty(product)) {
+
+				options.push('<option value="' + window.products[product].ID + '">' + window.products[product].post_title + '</option>');
+
+			}
+
+		}
+
 		var html = [
 
-			'<p>TEST '+id+'</p>'
+			'<div class="hotspot__detail" data-id="' + id + '">',
+			'<div class="hotspot__detail__header">',
+			'<span class="hotspot__id">' + id + '</span>Hot spot<span class="hotspot__delete" data-id="'+id+'">&minus;</span>',
+			'</div>',
+			'<div class="hotspot__detail__full">',
+			'<div class="hotspot__label">',
+			'<label>Product</label>',
+			'</div>',
+			'<select name="hotspots[' + this.container.attr('data-id') + '][hotspots][' + id + '][product]">',
+			'<option value="">Select a Product</option>',
+			options.join(''),
+			'</select>',
+			'</div>',
+			'</div>'
 
 		].join('');
 
@@ -225,10 +264,10 @@
 
 			'<div id="hotspot_detail_' + id + '" class="hotspot__detail" data-id="' + id + '">',
 			'<div class="hotspot__detail__header">',
-			'<span class="hotspot__id">' + id + '</span>Hot spot',
+			'<span class="hotspot__id">' + id + '</span>Hot spot<span class="hotspot__delete" data-id="'+id+'">&minus;</span>',
 			'</div>',
 			'<div class="hotspot__detail__left">',
-			'<input type="hidden" name="hotspots[' + id + '][image]" id="hotspot_detail_image_'+id+'" value="">',
+			'<input type="hidden" name="hotspots[' + id + '][image]" id="hotspot_detail_image_' + id + '" value="">',
 			'<div class="hotspot__label">',
 			'<label>Image</label>',
 			'<p class="description">',
@@ -270,7 +309,7 @@
 
 	Hotspots.prototype.insert = function(id, html) {
 
-		var insert = Math.max(0, id -2);
+		var insert = Math.max(0, id - 2);
 
 		if(insert === 0) {
 
@@ -292,28 +331,13 @@
 
 	};
 
-	Hotspots.prototype.bind = function(hotspot) {
-
-		var self = this;
-
-		hotspot.on('click', function(e) {
-
-			typeof e !== 'undefined' ? e.preventDefault() : null;
-
-			$(this).remove();
-
-			self.delete($(this).attr('data-id'));
-
-		});
-
-	};
-
 	Hotspots.prototype.delete = function(id) {
 
 		this.total--;
 		this.hotspots[id] = null;
 
-		this.details.find('.hotspot__detail[data-id="'+id+'"]').remove();
+		this.image.children('.hotspot__point[data-id="' + id + '"]').remove();
+		this.details.children('.hotspot__detail[data-id="' + id + '"]').remove();
 
 	};
 
@@ -338,7 +362,7 @@
 
 			if(mainHotspots.hotspots.hasOwnProperty(hotspot)) {
 
-				var container = $('#hotspot_detail_' + hotspot)
+				var container = $('#hotspot_detail_' + hotspot);
 
 				new Upload({
 

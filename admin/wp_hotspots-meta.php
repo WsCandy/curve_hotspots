@@ -98,7 +98,7 @@
 					<? foreach ( $this->meta['hotspots'] as $id => $spot ) : ?>
 						<div id="hotspot_detail_<?= $id; ?>" class="hotspot__detail" data-id="<?= $id; ?>">
 							<div class="hotspot__detail__header">
-								<span class="hotspot__id"><?= $id ?></span>Hot spot
+								<span class="hotspot__id"><?= $id ?></span>Hot spot<span class="hotspot__delete" data-id="<?= $id; ?>">&minus;</span>
 							</div>
 							<div class="hotspot__detail__left">
 								<input type="hidden" name="hotspots[<?= $id ?>][image]" id="hotspot_detail_image_<?= $id ?>" value="<?= $spot['image'] ? $spot['image'] : null; ?>">
@@ -137,7 +137,7 @@
 								<? foreach ( $spot['hotspots'] as $sub_id => $sub_spot ) : ?>
 									<div class="hotspot__detail" data-id="<?= $sub_id; ?>">
 										<div class="hotspot__detail__header">
-											<span class="hotspot__id"><?= $sub_id ?></span>Hot spot
+											<span class="hotspot__id"><?= $sub_id ?></span>Hot spot<span class="hotspot__delete" data-id="<?= $sub_id; ?>">&minus;</span>
 										</div>
 										<div class="hotspot__detail__full">
 											<div class="hotspot__label">
@@ -152,8 +152,8 @@
 										</div>
 									</div>
 								<? endforeach; ?>
-							</div>
 							<? endif; ?>
+							</div>
 						</div>
 					<? endforeach; ?>
 				<? endif; ?>
