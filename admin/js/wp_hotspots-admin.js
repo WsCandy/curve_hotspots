@@ -289,7 +289,7 @@
 			'<label>Alignment</label>',
 			'<p class="description">Which side of the hotspot would you like the label to appear on?</p>',
 			'</div>',
-			'<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][alignment]">',
+			'<select name="hotspots[' + this.container.attr('data-id') + '][hotspots][' + id + '][alignment]">',
 			'<option value="left">Left</option>',
 			'<option value="right">Right</option>',
 			'</select>',
