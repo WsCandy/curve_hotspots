@@ -154,8 +154,8 @@
 													<p class="description">Which side of the hotspot would you like the label to appear on?</p>
 												</div>
 												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][alignment]">
-													<option value="left">Left</option>
-													<option value="right">Right</option>
+													<option value="left"<?= $sub_spot['alignment'] === 'left' ? '  selected' : null ?>>Left</option>
+													<option value="right"<?= $sub_spot['alignment'] === 'right' ? '  selected' : null ?>>Right</option>
 												</select>
 											</div>
 										</div>
