@@ -99,6 +99,7 @@
 		this.image = data.container.find('.hotspot__image');
 		this.total = data.container.find('.hotspot__point').length;
 		this.addButton = data.container.find('.hotspot__add');
+		this.selectCollection = data.container.find('.hotspot__collection');
 
 		this.index();
 
@@ -116,6 +117,79 @@
 
 			self.add();
 
+		});
+
+		this.bindSelect();
+
+	};
+
+	Hotspots.prototype.bindSelect = function (id) {
+
+		var self = this;
+
+		self.onSelectCol = function (collection, current) {
+
+			var collection_id = collection;
+
+			self.doAjax(window.shop_url + '?id=' + collection_id, current);
+
+		};
+
+		if(id) {
+
+			this.container.find('.hotspot__detail[data-id="' + id + '"]').find('.hotspot__collection').change( function () { self.onSelectCol($(this).val(), $(this)); } );
+
+		} else {
+
+			this.selectCollection.change( function () { self.onSelectCol($(this).val(), $(this)); } );
+
+		}
+
+	};
+
+	Hotspots.prototype.doAjax = function (request_url, current) {
+
+		var self = this;
+
+		self.spinner = current.parents('.hotspot__detail__full').find('.hotspot__spinner');
+		self.select = current.parents('.hotspot__detail__full').find('.hotspot__product');
+
+		$.ajax({
+			url: request_url,
+			dataType: 'json',
+			cache: false,
+			beforeSend: function () {
+
+				self.spinner.addClass('show');
+
+			},
+			success: function (jq) {
+
+				if(jq.data && jq.data.length > 0) {
+
+					var html = [];
+
+					for(var product in jq.data) {
+
+						html.push('<option value="' + jq.data[product].id + '">' + jq.data[product].title + '</option>');
+
+					}
+
+					self.spinner.removeClass('show');
+					self.select.html(html.join(''));
+
+				}
+
+			},
+			error: function (data) {
+
+				if(data.message) {
+
+					console.error(data.message);
+
+				}
+
+			}
 		});
 
 	};
@@ -261,11 +335,11 @@
 
 		var options = [];
 
-		for(var product in window.products) {
+		for(var collection in window.collections) {
 
-			if(window.products.hasOwnProperty(product)) {
+			if(window.collections.hasOwnProperty(collection)) {
 
-				options.push('<option value="' + window.products[product].ID + '">' + window.products[product].post_title + '</option>');
+				options.push('<option value="' + window.collections[collection].id + '">' + window.collections[collection].title + '</option>');
 
 			}
 
@@ -279,11 +353,18 @@
 			'</div>',
 			'<div class="hotspot__detail__full">',
 			'<div class="hotspot__label">',
-			'<label>Product</label>',
+			'<label>Collection</label>',
 			'</div>',
-			'<select name="hotspots[' + this.container.attr('data-id') + '][hotspots][' + id + '][product]">',
-			'<option value="">Select a Product</option>',
+			'<select name="hotspots[' + this.container.attr('data-id') + '][hotspots][' + id + '][collection]" class="hotspot__collection">',
+			'<option value="">Select a Collection</option>',
 			options.join(''),
+			'</select>',
+			'<div class="hotspot__label">',
+			'<label>Product</label>',
+			'<span class="hotspot__spinner"></span>',
+			'</div>',
+			'<select name="hotspots[' + this.container.attr('data-id') + '][hotspots][' + id + '][product]" class="hotspot__product">',
+			'<option value="">Select a Product</option>',
 			'</select>',
 			'<div class="hotspot__label">',
 			'<label>Alignment</label>',
@@ -299,6 +380,8 @@
 		].join('');
 
 		this.insert(id, html);
+
+		this.bindSelect(id);
 
 	};
 

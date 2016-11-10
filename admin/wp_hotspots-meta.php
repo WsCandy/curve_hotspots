@@ -21,16 +21,37 @@
 
 		public $type;
 		public $meta;
+		public $shopify;
 		public $new_meta;
 		public $products;
+		public $ws_class;
+		public $collections;
 
 		public function __construct( $type = null ) {
 
 			$this->type     = $type;
-			$this->products = get_posts( [ 'post_type' => 'products' ] );
 
 			add_action( 'add_meta_boxes', [ $this, 'add_meta' ] );
 			add_action( 'save_post', [ $this, 'validate_meta' ] );
+
+			add_action( 'plugins_loaded', [ $this, 'call_wordpress_shopify' ] );
+
+		}
+
+		public function call_wordpress_shopify () {
+
+			if( class_exists( 'Wordpress_Shopify_Api' ) ) {
+
+				$this->ws_class = true;
+				$this->shopify = Wordpress_Shopify_Api::forge( ENDPOINT_COLLECTIONS );
+
+				$this->collections = $this->shopify->get_collections();
+
+			} else {
+
+				$this->ws_class = false;
+
+			}
 
 		}
 
@@ -50,12 +71,23 @@
 				$this->meta = [ ];
 			}
 
+			if( !$this->ws_class ) {
+
+				print (
+
+					'<div class="notice notice-error is-dismissible"><p>Wordpress Shopify plugin is required.</p></div>'
+
+				);
+
+			}
+
 			?>
 
 			<div class="hotspot__background">
 
 				<script>
-					window.products = <?= json_encode($this->products) ?>;
+					window.shop_url = '<?= get_home_url().'/wp-json/shopify/v1/products/' ?>';
+					window.collections = <?= json_encode($this->collections) ?>;
 				</script>
 
 				<?php wp_nonce_field( basename( __FILE__ ), 'hotspot_nonce' ); ?>
@@ -140,23 +172,55 @@
 												<span class="hotspot__id"><?= $sub_id ?></span>Hot spot<span class="hotspot__delete" data-id="<?= $sub_id; ?>">&minus;</span>
 											</div>
 											<div class="hotspot__detail__full">
+
+												<? /* COLLECTIONS */ ?>
 												<div class="hotspot__label">
-													<label>Product</label>
+													<label>Collection</label>
 												</div>
-												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][product]">
-													<option value="">Select a Product</option>
-													<? foreach ( $this->products as $product ) : ?>
-														<option value="<?= $product->ID; ?>"<?= $product->ID === (int) $sub_spot['product'] ? '  selected' : null ?>><?= $product->post_title; ?></option>
+
+												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][collection]" class="hotspot__collection">
+													<option value="">Select a Collection</option>
+													<? foreach ( $this->collections as $collection ) : ?>
+
+														<option value="<?= $collection->id; ?>"<?= $collection->id === (int) $sub_spot['collection'] ? '  selected' : null ?>><?= $collection->title; ?></option>
+
 													<? endforeach; ?>
 												</select>
+
+												<? /* PRODUCTS */ ?>
+												<div class="hotspot__label">
+													<label>Product</label>
+													<span class="hotspot__spinner"></span>
+												</div>
+
+												<?
+													$this->shopify = Wordpress_Shopify_Api::forge( ENDPOINT_PRODUCTS, [ 'collection_id' => $sub_spot['collection'] ] );
+													$this->products = $this->shopify->get_products();
+												?>
+
+												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][product]" class="hotspot__product">
+													<option value="">Select a Product</option>
+													<? if($this->products): ?>
+
+														<? foreach ( $this->products as $product ) : ?>
+
+															<option value="<?= $product->id; ?>"<?= $product->id === (int) $sub_spot['product'] ? '  selected' : null ?>><?= $product->title; ?></option>
+
+														<? endforeach; ?>
+
+													<? endif; ?>
+												</select>
+
 												<div class="hotspot__label">
 													<label>Alignment</label>
 													<p class="description">Which side of the hotspot would you like the label to appear on?</p>
 												</div>
+
 												<select name="hotspots[<?= $id ?>][hotspots][<?= $sub_id ?>][alignment]">
 													<option value="left"<?= $sub_spot['alignment'] === 'left' ? '  selected' : null ?>>Left</option>
 													<option value="right"<?= $sub_spot['alignment'] === 'right' ? '  selected' : null ?>>Right</option>
 												</select>
+
 											</div>
 										</div>
 									<? endforeach; ?>
