@@ -16,6 +16,26 @@
 
 }
 
+.hotspot__spinner {
+
+	position: absolute;
+	margin-left: 5px;
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	visibility: hidden;
+	opacity: 0;
+	background: url('../images/spinner.gif');
+
+}
+
+.hotspot__spinner.show {
+
+	visibility: visible;;
+	opacity: 1;
+
+}
+
 .hotspot__background {
 
 	margin-bottom: 7px;
